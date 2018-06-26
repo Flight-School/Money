@@ -66,6 +66,11 @@ integer, floating-point, and string literals.
 "12.00" as Money<USD>
 ```
 
+This package provides all of the currencies
+defined by the ISO 4217 standard as of June 2018,
+with the exception of special codes, such as USN (US Dollar, Next day) and
+XBC (Bond Markets Unit European Unit of Account 9).
+
 **Important**:
 Swift floating-point literals are currently initialized
 using binary floating-point number type,
@@ -140,6 +145,36 @@ formatter.numberStyle = .currency
 formatter.locale = Locale(identifier: "fr-FR")
 formatter.currencyCode = allowance.currency.code
 formatter.string(for: allowance.amount) // "10,00 $US"
+```
+
+### Adding Custom Currencies
+
+You can create your own custom currency types by defining an enumeration
+that conforms to the `CurrencyType` protocol.
+For example, here's how you might represent Bitcoin (BTC):
+
+```swift
+enum BTC: CurrencyType {
+    static var name: String { return "Bitcoin" }
+    static var code: String { return "BTC" }
+    static var minorUnit: Int { return 8 }
+}
+
+let satoshi: Money<BTC> = 0.00000001
+```
+
+`NumberFormatter` only supports currencies defined by ISO 4217,
+so you'll have to configure the symbol, currency code,
+and any other necessary parameters:
+
+```swift
+let formatter = NumberFormatter()
+formatter.numberStyle = .currency
+formatter.currencySymbol = "₿"
+formatter.currencyCode = "BTC"
+formatter.maximumFractionDigits = 8
+
+formatter.string(for: satoshi.amount) // ₿0.00000001
 ```
 
 ## License
