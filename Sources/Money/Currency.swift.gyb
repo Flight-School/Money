@@ -1,0 +1,55 @@
+% warning = "This file was automatically generated and should not be edited."
+// ${warning}
+
+/// A monetary unit.
+public protocol CurrencyType {
+    /// The three letter ISO 4217 currency code.
+    static var code: String { get }
+
+    /// The name of the currency.
+    static var name: String { get }
+
+    /**
+        The number of decimal places used to express
+        any minor units for the currency.
+
+        For example, the US Dollar (USD)
+        has a minor unit (cents)
+        equal to 1/100 of a dollar,
+        and therefore takes 2 decimal places.
+        The Japanese Yen (JPY)
+        doesn't have a minor unit,
+        and therefore takes 0 decimal places.
+    */
+    static var minorUnit: Int { get }
+}
+
+%{
+  import csv
+}%
+% with open('../../Resources/iso4217.csv') as file:
+    % for row in csv.DictReader(file):
+%{
+code = row["Code"]
+name = row["Name"]
+minorUnit = row["MinorUnit"]
+}%
+        % if code and name and minorUnit:
+/// ${name} (${code})
+public enum ${code}: CurrencyType {
+    public static var code: String {
+        return "${code}"
+    }
+
+    public static var name: String {
+        return "${name}"
+    }
+
+    public static var minorUnit: Int {
+        return ${minorUnit}
+    }
+}
+
+        %end
+    %end
+%end
