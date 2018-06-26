@@ -177,6 +177,20 @@ formatter.maximumFractionDigits = 8
 formatter.string(for: satoshi.amount) // ₿0.00000001
 ```
 
+### Showing Off with Emoji
+
+If you're the type of person who enjoys putting clip art in your source code,
+here's a trick that'll _really_ impress your teammates:
+
+```swift
+typealias 💵 = Money<USD>
+typealias 💴 = Money<JPY>
+typealias 💶 = Money<EUR>
+typealias 💷 = Money<GBP>
+
+let tubeFare: 💷 = 2.40 // "£2.40"
+```
+
 ## License
 
 MIT
