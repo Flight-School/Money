@@ -130,6 +130,79 @@ of the minor currency unit.
 If you want to produce a smaller fractional monetary amount,
 multiply by a `Decimal` value instead.
 
+### Supporting Multiple Currencies
+
+Because `Money` is a generic type,
+any type that has a `Money` property must either specify its generic parameter
+or be generic itself.
+
+Consider a `Product` structure with a `price` property.
+If only a single currency is supported, such as US Dollars,
+would define `price` to be of type `Money<USD>`:
+
+```swift
+struct Product {
+    var price: Money<USD>
+}
+```
+
+If multiple currencies are supported,
+`Product` could be defined as a generic type:
+
+```swift
+struct Product<Currency: CurrencyType> {
+    var price: Money<Currency>
+}
+```
+
+Unfortunately, this approach is unwieldy,
+as each type that interacts with `Product` would also need to be generic,
+and so on, until the entire code base is generic over the currency type.
+
+A better solution would be to define a new `Price` protocol
+with requirements that match the `Money` type:
+
+```swift
+protocol Price {
+    var amount: Decimal { get }
+    var currency: CurrencyType.Type { get }
+}
+
+extension Money: Price {}
+```
+
+Doing this allows prices to be defined in multiple currencies
+without making `Product` generic over the currency type:
+
+```swift
+struct Product {
+    var price: Price
+}
+
+let product = Product(price: 12.00 as Money<USD>)
+product.price // "$12.00"
+```
+
+If you want to support only certain currencies, such as US Dollars and Euros,
+you can define a `SupportedCurrency` protocol
+and add conformance to each currency type through an extension:
+
+```swift
+protocol SupportedCurrency: CurrencyType {}
+extension USD: SupportedCurrency {}
+extension EUR: SupportedCurrency {}
+
+extension Money: Price where Currency: SupportedCurrency {}
+```
+
+Now, attempting to create a `Product` with a price in an unsupported currency
+results in a compiler error:
+
+```swift
+Product(price: 100.00 as Money<EUR>)
+Product(price: 100.00 as Money<GBP>) // Error
+```
+
 ### Formatting Monetary Amounts
 
 You can create a localized representation of a monetary amount
