@@ -132,13 +132,9 @@ multiply by a `Decimal` value instead.
 
 ### Supporting Multiple Currencies
 
-Because `Money` is a generic type,
-any type that has a `Money` property must either specify its generic parameter
-or be generic itself.
-
 Consider a `Product` structure with a `price` property.
-If only a single currency is supported, such as US Dollars,
-would define `price` to be of type `Money<USD>`:
+If you only support a single currency, such as US Dollars,
+you would define `price` to be of type `Money<USD>`:
 
 ```swift
 struct Product {
@@ -146,8 +142,9 @@ struct Product {
 }
 ```
 
-If multiple currencies are supported,
-`Product` could be defined as a generic type:
+If you want to support multiple currencies, however,
+you can't specify an explicit currency type in the property declaration.
+Instead, the `Product` would have to be defined as a generic type:
 
 ```swift
 struct Product<Currency: CurrencyType> {
@@ -158,6 +155,10 @@ struct Product<Currency: CurrencyType> {
 Unfortunately, this approach is unwieldy,
 as each type that interacts with `Product` would also need to be generic,
 and so on, until the entire code base is generic over the currency type.
+
+```swift
+class ViewController<Currency: CurrencyType> : UIViewController { ... } // 😭
+```
 
 A better solution would be to define a new `Price` protocol
 with requirements that match the `Money` type:
