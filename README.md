@@ -37,7 +37,7 @@ To use `Money` in your Xcode project using Carthage,
 specify it in `Cartfile`:
 
 ```
-github "Flight-School/Money" ~> 1.0.0
+github "Flight-School/Money" ~> 1.0
 ```
 
 Then run the `carthage update` command to build the framework,
