@@ -43,6 +43,32 @@ github "Flight-School/Money" ~> 1.0.0
 Then run the `carthage update` command to build the framework,
 and drag the built Money.framework into your Xcode project.
 
+### Cocoapods
+
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate Money into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0'
+use_frameworks!
+
+target '<Your Target Name>' do
+    pod 'Money', '~> 1.0'
+end
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+```
+
 ## Usage
 
 ### Creating Monetary Amounts
