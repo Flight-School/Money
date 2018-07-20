@@ -21,7 +21,7 @@ A precise, type-safe representation of a monetary amount in a given currency.
   s.watchos.deployment_target = '3.0'
   s.tvos.deployment_target = '9.0'
 
-  s.source       = { :git => 'https://github.com/Flight-School/Money.git', :tag => '#{s.version}' }
+  s.source       = { :git => 'https://github.com/Flight-School/Money.git', :tag => s.version.to_s }
 
   s.source_files  = 'Sources/Money/*.swift'
 
