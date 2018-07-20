@@ -37,7 +37,7 @@ To use `Money` in your Xcode project using Carthage,
 specify it in `Cartfile`:
 
 ```
-github "Flight-School/Money" ~> 1.0.0
+github "Flight-School/Money" ~> 1.0
 ```
 
 Then run the `carthage update` command to build the framework,
@@ -290,6 +290,34 @@ typealias 💷 = Money<GBP>
 
 let tubeFare: 💷 = 2.40 // "£2.40"
 ```
+
+## Alternatives to Consider
+
+A type-safe `Money` structure like the one provided by this package
+can reduce the likelihood of certain kinds of programming errors.
+However, you may find the cost of using this abstraction
+to outweigh the benefits it can provide in your code base.
+
+If that's the case,
+you might consider implementing your own simple `Money` type
+with a nested `Currency` enumeration like this:
+
+```swift
+struct Money {
+   enum Currency: String {
+      case USD, EUR, GBP, CNY // supported currencies here
+   }
+
+   var amount: Decimal
+   var currency: Currency
+}
+```
+
+It's ultimately up to you to decide what kind of abstraction
+is best for your particular use case.
+Whatever you choose,
+just make sure to represent monetary amounts using a `Decimal` type
+with an explicit currency.
 
 ## License
 
