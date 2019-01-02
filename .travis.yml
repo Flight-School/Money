@@ -1,0 +1,4 @@
+language: objective-c
+xcode_project: Money.xcodeproj
+xcode_scheme: Money
+xcode_destination: platform=macOs
