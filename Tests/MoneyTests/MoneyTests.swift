@@ -14,7 +14,6 @@ final class MoneyTests: XCTestCase {
         XCTAssertEqual(total.amount, Decimal(string: "39.45", locale: nil))
     }
 
-
     static var allTests = [
         ("testMonetaryCalculations", testMonetaryCalculations),
     ]
