@@ -1,5 +1,7 @@
 # Money
 
+![Build Status](https://api.travis-ci.com/Flight-School/Money.svg?branch=master)
+
 A precise, type-safe representation of monetary amounts in a given currency.
 
 This functionality is discussed in Chapter 3 of
