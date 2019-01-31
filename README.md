@@ -1,11 +1,11 @@
 # Money
 
-![Build Status](https://api.travis-ci.com/Flight-School/Money.svg?branch=master)
+[![Build Status][build status badge]][build status]
 
 A precise, type-safe representation of monetary amounts in a given currency.
 
 This functionality is discussed in Chapter 3 of
-[Flight School Guide to Swift Numbers](https://gumroad.com/l/swift-numbers).
+[Flight School Guide to Swift Numbers](https://flight.school/books/numbers).
 
 ## Requirements
 
@@ -302,3 +302,6 @@ MIT
 ## Contact
 
 Mattt ([@mattt](https://twitter.com/mattt))
+
+[build status]: https://travis-ci.org/Flight-School/Money
+[build status badge]: https://api.travis-ci.com/Flight-School/Money.svg?branch=master
