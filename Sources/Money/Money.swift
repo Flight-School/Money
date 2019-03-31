@@ -114,6 +114,10 @@ extension Money {
     }
 }
 
+#if swift(>=5.0)
+extension Money: AdditiveArithmetic {}
+#endif
+
 extension Money {
     /// The product of a monetary amount and a scalar value.
     public static func * (lhs: Money<Currency>, rhs: Decimal) -> Money<Currency> {
