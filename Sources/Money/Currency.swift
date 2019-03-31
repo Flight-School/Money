@@ -1163,14 +1163,14 @@ public enum KHR: CurrencyType {
     }
 }
 
-/// Comorian Franc  (KMF)
+/// Comorian Franc (KMF)
 public enum KMF: CurrencyType {
     public static var code: String {
         return "KMF"
     }
 
     public static var name: String {
-        return "Comorian Franc "
+        return "Comorian Franc"
     }
 
     public static var minorUnit: Int {
