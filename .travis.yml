@@ -1,3 +1,4 @@
+osx_image: xcode10.2
 language: objective-c
 xcode_project: Money.xcodeproj
 xcode_scheme: Money
