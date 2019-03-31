@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+### Changed
+
+- Updated "Supported Currencies" section
+  with instructions for generating source files
+
 ## [1.1.0] - 2019-03-31
 
 ### Added

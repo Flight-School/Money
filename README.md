@@ -129,6 +129,23 @@ of the minor currency unit.
 If you want to produce a smaller fractional monetary amount,
 multiply by a `Decimal` value instead.
 
+### Formatting Monetary Amounts
+
+You can create a localized representation of a monetary amount
+using `NumberFormatter`.
+Set the `currencyCode` property of the formatter
+to the `currency.code` property of the `Money` value
+and pass the `amount` property to the formatter `string(for:)` method.
+
+```swift
+let allowance: Money<USD> = 10.00
+let formatter = NumberFormatter()
+formatter.numberStyle = .currency
+formatter.locale = Locale(identifier: "fr-FR")
+formatter.currencyCode = allowance.currency.code
+formatter.string(for: allowance.amount) // "10,00 $US"
+```
+
 ### Supporting Multiple Currencies
 
 Consider a `Product` structure with a `price` property.
@@ -203,27 +220,10 @@ Product(price: 100.00 as Money<EUR>)
 Product(price: 100.00 as Money<GBP>) // Error
 ```
 
-### Formatting Monetary Amounts
+#### Supported Currencies
 
-You can create a localized representation of a monetary amount
-using `NumberFormatter`.
-Set the `currencyCode` property of the formatter
-to the `currency.code` property of the `Money` value
-and pass the `amount` property to the formatter `string(for:)` method.
-
-```swift
-let allowance: Money<USD> = 10.00
-let formatter = NumberFormatter()
-formatter.numberStyle = .currency
-formatter.locale = Locale(identifier: "fr-FR")
-formatter.currencyCode = allowance.currency.code
-formatter.string(for: allowance.amount) // "10,00 $US"
-```
-
-### Adding Custom Currencies
-
-This package provides all of the currencies
-defined by the [ISO 4217][iso4217] standard
+This package provides a `Currency` type for
+each of the currencies defined by the [ISO 4217][iso4217] standard
 with the exception of special codes,
 such as USN (US Dollar, Next day) and
 XBC (Bond Markets Unit European Unit of Account 9).
@@ -234,9 +234,19 @@ This data source is up-to-date with
 [ISO 4217 Amendment Number 169](https://www.currency-iso.org/en/shared/amendments/iso-4217-amendment.html),
 published on August 17, 2018.
 
+You can regenerate `Sources/Money/Currency.swift` from `Resources/iso4217.csv`
+by installing [GYB][gyb]
+and running the `make` command from the terminal:
+
+```terminal
+$ make
+```
+
 > We don't currently have a mechanism to automatically update this data source.
 > Please [open an issue](https://github.com/Flight-School/Money/issues/new)
 > if you're aware of any new amendments made to ISO 4217.
+
+### Adding Custom Currencies
 
 You can create your own custom currency types by defining an enumeration
 that conforms to the `CurrencyType` protocol.
