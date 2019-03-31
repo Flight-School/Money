@@ -202,7 +202,10 @@
 				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					"Money::Money" = {
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
+					};
+					"Money::MoneyTests" = {
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
@@ -312,7 +315,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = Money;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -338,7 +341,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = Money;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -442,7 +445,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = MoneyTests;
 			};
 			name = Debug;
@@ -462,7 +465,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGET_NAME = MoneyTests;
 			};
 			name = Release;
