@@ -1,6 +1,8 @@
 # Money
 
 [![Build Status][build status badge]][build status]
+[![License][license badge]][license]
+[![Swift Version][swift version badge]][swift version]
 
 A precise, type-safe representation of monetary amounts in a given currency.
 
@@ -320,3 +322,7 @@ Mattt ([@mattt](https://twitter.com/mattt))
 [iso4217]: https://en.wikipedia.org/wiki/ISO_4217
 [iso4217.csv]: https://github.com/Flight-School/Money/blob/master/Resources/iso4217.csv
 [gyb]: https://nshipster.com/swift-gyb/
+[license]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license badge]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[swift version]: https://swift.org/download/
+[swift version badge]: https://img.shields.io/badge/swift%20version-4.0+-orange.svg?style=flat
