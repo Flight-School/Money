@@ -51,7 +51,7 @@ and drag the built Money.framework into your Xcode project.
 
 The `Money` type has a required associated `Currency` type.
 These currency types are named according to their
-three letter [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) currency code.
+three letter [ISO 4701][iso4217]] currency codes.
 You can initialize a monetary using a `Decimal` value:
 
 ```swift
@@ -67,11 +67,6 @@ integer, floating-point, and string literals.
 12.00 as Money<USD>
 "12.00" as Money<USD>
 ```
-
-This package provides all of the currencies
-defined by the ISO 4217 standard as of June 2018,
-with the exception of special codes, such as USN (US Dollar, Next day) and
-XBC (Bond Markets Unit European Unit of Account 9).
 
 **Important**:
 Swift floating-point literals are currently initialized
@@ -225,6 +220,22 @@ formatter.string(for: allowance.amount) // "10,00 $US"
 
 ### Adding Custom Currencies
 
+This package provides all of the currencies
+defined by the [ISO 4217][iso4217] standard
+with the exception of special codes,
+such as USN (US Dollar, Next day) and
+XBC (Bond Markets Unit European Unit of Account 9).
+
+The [source file][currency.swift] defining the available currencies
+is generated from a [CSV file][iso4217.csv] using [GYB][gyb].
+This data source is up-to-date with
+[ISO 4217 Amendment Number 169](https://www.currency-iso.org/en/shared/amendments/iso-4217-amendment.html),
+published on August 17, 2018.
+
+> We don't currently have a mechanism to automatically update this data source.
+> Please [open an issue](https://github.com/Flight-School/Money/issues/new)
+> if you're aware of any new amendments made to ISO 4217.
+
 You can create your own custom currency types by defining an enumeration
 that conforms to the `CurrencyType` protocol.
 For example, here's how you might represent Bitcoin (BTC):
@@ -305,3 +316,7 @@ Mattt ([@mattt](https://twitter.com/mattt))
 
 [build status]: https://travis-ci.org/Flight-School/Money
 [build status badge]: https://api.travis-ci.com/Flight-School/Money.svg?branch=master
+[currency.swift]: https://github.com/Flight-School/Money/blob/master/Sources/Money/Currency.swift
+[iso4217]: https://en.wikipedia.org/wiki/ISO_4217
+[iso4217.csv]: https://github.com/Flight-School/Money/blob/master/Resources/iso4217.csv
+[gyb]: https://nshipster.com/swift-gyb/
