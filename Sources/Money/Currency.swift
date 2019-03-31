@@ -818,6 +818,21 @@ public enum GEL: CurrencyType {
     }
 }
 
+/// Guernsey Pound (GGP)
+public enum GGP: CurrencyType {
+    public static var code: String {
+        return "GGP"
+    }
+    
+    public static var name: String {
+        return "Guernsey Pound"
+    }
+    
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
 /// Ghana Cedi (GHS)
 public enum GHS: CurrencyType {
     public static var code: String {
@@ -1013,6 +1028,21 @@ public enum ILS: CurrencyType {
     }
 }
 
+/// Isle of Man Pound (IMP)
+public enum IMP: CurrencyType {
+    public static var code: String {
+        return "IMP"
+    }
+
+    public static var name: String {
+        return "Isle of Man Pound"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
 /// Indian Rupee (INR)
 public enum INR: CurrencyType {
     public static var code: String {
@@ -1070,6 +1100,21 @@ public enum ISK: CurrencyType {
 
     public static var minorUnit: Int {
         return 0
+    }
+}
+
+/// Jersey Pound (JEP)
+public enum JEP: CurrencyType {
+    public static var code: String {
+        return "JEP"
+    }
+
+    public static var name: String {
+        return "Jersey Pound"
+    }
+
+    public static var minorUnit: Int {
+        return 2
     }
 }
 
@@ -1170,7 +1215,7 @@ public enum KMF: CurrencyType {
     }
 
     public static var name: String {
-        return "Comorian Franc "
+        return "Comorian Franc"
     }
 
     public static var minorUnit: Int {
@@ -1328,6 +1373,36 @@ public enum LSL: CurrencyType {
     }
 }
 
+/// Lithuanian Litas (LTL)
+public enum LTL: CurrencyType {
+    public static var code: String {
+        return "LTL"
+    }
+
+    public static var name: String {
+        return "Lithuanian Litas"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// Latvian Lat (LVL)
+public enum LVL: CurrencyType {
+    public static var code: String {
+        return "LVL"
+    }
+
+    public static var name: String {
+        return "Latvian Lat"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
 /// Libyan Dinar (LYD)
 public enum LYD: CurrencyType {
     public static var code: String {
@@ -1441,6 +1516,21 @@ public enum MOP: CurrencyType {
 
     public static var name: String {
         return "Pataca"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// Mauritanian Ouguiya (MRO)
+public enum MRO: CurrencyType {
+    public static var code: String {
+        return "MRO"
+    }
+
+    public static var name: String {
+        return "Mauritanian Ouguiya"
     }
 
     public static var minorUnit: Int {
@@ -2003,6 +2093,21 @@ public enum SRD: CurrencyType {
     }
 }
 
+/// Sao Tomean Dobra (STD)
+public enum STD: CurrencyType {
+    public static var code: String {
+        return "STD"
+    }
+
+    public static var name: String {
+        return "Sao Tomean Dobra"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
 /// South Sudanese Pound (SSP)
 public enum SSP: CurrencyType {
     public static var code: String {
@@ -2363,6 +2468,51 @@ public enum WST: CurrencyType {
     }
 }
 
+/// Central African CFA Franc BEAC (XAF)
+public enum XAF: CurrencyType {
+    public static var code: String {
+        return "XAF"
+    }
+
+    public static var name: String {
+        return "Central African CFA Franc BEAC"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// Silver Ounce (XAG)
+public enum XAG: CurrencyType {
+    public static var code: String {
+        return "XAG"
+    }
+
+    public static var name: String {
+        return "Silver Ounce"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// Gold Ounce (XAU)
+public enum XAU: CurrencyType {
+    public static var code: String {
+        return "XAU"
+    }
+
+    public static var name: String {
+        return "Gold Ounce"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
 /// East Caribbean Dollar (XCD)
 public enum XCD: CurrencyType {
     public static var code: String {
@@ -2371,6 +2521,51 @@ public enum XCD: CurrencyType {
 
     public static var name: String {
         return "East Caribbean Dollar"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// IMF Special Drawing Rights (XDR)
+public enum XDR: CurrencyType {
+    public static var code: String {
+        return "XDR"
+    }
+
+    public static var name: String {
+        return "IMF Special Drawing Rights"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// CFA Franc (XOF)
+public enum XOF: CurrencyType {
+    public static var code: String {
+        return "XOF"
+    }
+
+    public static var name: String {
+        return "CFA Franc"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// CFP Franc (XPF)
+public enum XPF: CurrencyType {
+    public static var code: String {
+        return "XPF"
+    }
+
+    public static var name: String {
+        return "CFP Franc"
     }
 
     public static var minorUnit: Int {
@@ -2401,6 +2596,21 @@ public enum ZAR: CurrencyType {
 
     public static var name: String {
         return "Rand"
+    }
+
+    public static var minorUnit: Int {
+        return 2
+    }
+}
+
+/// Zambian Kwacha (ZMK)
+public enum ZMK: CurrencyType {
+    public static var code: String {
+        return "ZMK"
+    }
+
+    public static var name: String {
+        return "Zambian Kwacha"
     }
 
     public static var minorUnit: Int {
