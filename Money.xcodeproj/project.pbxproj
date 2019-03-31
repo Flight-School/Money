@@ -211,6 +211,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = OBJ_5;
@@ -244,7 +245,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "find . -name '*.gyb' | while read file; do ./Vendor/gyb --line-directive '' -o \"${file%.gyb}\" \"$file\"; done\n";
+			shellScript = "if command -v gyb; then\nfind . -name '*.gyb' | while read file; do gyb --line-directive '' -o \"${file%.gyb}\" \"$file\"; done\nelse\necho \"warning: gyb not found; skipping automatic file generation from .swift.gyb templates\";\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
