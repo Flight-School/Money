@@ -3,6 +3,9 @@
 [![Build Status][build status badge]][build status]
 [![License][license badge]][license]
 [![Swift Version][swift version badge]][swift version]
+![Cocoapods platforms][cocoapods platforms badge]
+[![Cocoapods compatible][cocoapods badge]][cocoapods]
+[![Carthage compatible][carthage badge]][carthage]
 
 A precise, type-safe representation of monetary amounts in a given currency.
 
@@ -351,7 +354,12 @@ Mattt ([@mattt](https://twitter.com/mattt))
 [iso4217]: https://en.wikipedia.org/wiki/ISO_4217
 [iso4217.csv]: https://github.com/Flight-School/Money/blob/master/Resources/iso4217.csv
 [gyb]: https://nshipster.com/swift-gyb/
-[license]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license badge]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license]: https://opensource.org/licenses/MIT
+[license badge]: https://img.shields.io/cocoapods/l/Money-FlightSchool.svg
 [swift version]: https://swift.org/download/
-[swift version badge]: https://img.shields.io/badge/swift%20version-4.0+-orange.svg?style=flat
+[swift version badge]: https://img.shields.io/badge/swift%20version-4.0+-orange.svg
+[cocoapods platforms badge]: https://img.shields.io/cocoapods/p/Money-FlightSchool.svg
+[cocoapods]: https://cocoapods.org/pods/Money-FlightSchool
+[cocoapods badge]: https://img.shields.io/cocoapods/v/Money-FlightSchool.svg
+[carthage]: https://github.com/Carthage/Carthage
+[carthage badge]: https://img.shields.io/badge/Carthage-compatible-4BC51D.svg
