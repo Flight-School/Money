@@ -3,3 +3,8 @@ language: swift
 xcode_project: Money.xcodeproj
 xcode_scheme: Money
 xcode_destination: platform=macOs
+deploy:
+  provider: script
+  script: pod trunk push
+  on:
+    tags: true
