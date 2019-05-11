@@ -35,6 +35,25 @@ let package = Package(
 
 Then run the `swift build` command to build your project.
 
+### CocoaPods
+
+You can install `Money` via CocoaPods,
+by adding the following line to your `Podfile`:
+
+```ruby
+pod 'Money-FlightSchool'
+```
+
+Run the `pod install` command to download the library
+and integrate it into your Xcode project.
+
+> **Note**
+> The module name for this library is "Money" ---
+> that is, to use it, you add `import Money` to the top of your Swift code
+> just as you would by any other installation method.
+> The pod is called "Money-FlightSchool"
+> because there's an existing pod with the name "Money".
+
 ### Carthage
 
 To use `Money` in your Xcode project using Carthage,
