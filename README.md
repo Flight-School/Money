@@ -75,7 +75,7 @@ and drag the built Money.framework into your Xcode project.
 
 The `Money` type has a required associated `Currency` type.
 These currency types are named according to their
-three letter [ISO 4701][iso4217]] currency codes.
+three letter [ISO 4701][iso4217] currency codes.
 You can initialize a monetary using a `Decimal` value:
 
 ```swift
