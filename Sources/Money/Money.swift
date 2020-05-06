@@ -20,11 +20,7 @@ public struct Money<Currency: CurrencyType>: Equatable, Hashable {
         the number of places of the minor currency unit.
      */
     public var rounded: Money<Currency> {
-        var approximate = self.amount
-        var rounded = Decimal()
-        NSDecimalRound(&rounded, &approximate, Currency.minorUnit, .bankers)
-        
-        return Money<Currency>(rounded)
+        return Money<Currency>(amount.rounded(for: Currency.self))
     }
 }
 
@@ -71,10 +67,7 @@ extension Money: ExpressibleByFloatLiteral {
      - Bug: See https://bugs.swift.org/browse/SR-920
     */
     public init(floatLiteral value: Double) {
-        var approximate = Decimal(floatLiteral: value)
-        var rounded = Decimal()
-        NSDecimalRound(&rounded, &approximate, Currency.minorUnit, .bankers)
-        self.init(rounded)
+        self.init(Decimal(floatLiteral: value).rounded(for: Currency.self))
     }
 }
 
@@ -197,6 +190,64 @@ extension Money {
     }
 }
 
+// MARK: -
+
+extension CodingUserInfoKey {
+    /**
+     The key for specifying custom decoding options for `Money` values.
+
+     This user info key should be associated with
+     an `MoneyDecodingOptions` object.
+
+     - SeeAlso: `JSONDecoder.moneyDecodingOptions`
+     */
+    public static let moneyDecodingOptions = CodingUserInfoKey(rawValue: "com.flightschool.money.decoding-options")!
+}
+
+/**
+ Custom decoding options for `Money` values.
+
+ Configure the decoding behavior either
+ by using the `JSONDecoder.moneyDecodingOptions` property
+ or by setting the `CodingUserInfoKey.moneyDecodingOptions` key
+ in the decoder's `userInfo` property.
+ */
+public struct MoneyDecodingOptions: OptionSet {
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    /**
+     Throws a `DecodingError` when attempting to decode
+     a `Money` value from a string or number value.
+
+     By default, `Money` values are decoded from single values
+     using the associated `Currency` type.
+     */
+    public static let requireExplicitCurrency = MoneyDecodingOptions(rawValue: 1 << 1)
+
+    /**
+     Throws an error when attempting to decode
+     `amount` from a floating-point number.
+
+     - Important: Foundation decoders currently decode number values
+                  using binary floating-point number type,
+                  which cannot precisely express certain values.
+                  Monetary amounts can, however,
+                  be precisely decoded from string values.
+     - Bug: See https://bugs.swift.org/browse/SR-7054.
+     */
+    public static let requireStringAmounts = MoneyDecodingOptions(rawValue: 1 << 2)
+
+    /**
+     Rounds `amount` to the number of places of the minor currency unit
+     when decoding from a floating-point number.
+     */
+    public static let roundFloatingPointAmounts = MoneyDecodingOptions(rawValue: 1 << 3)
+}
+
 extension Money: Codable {
     private enum CodingKeys: String, CodingKey {
         case amount
@@ -204,15 +255,47 @@ extension Money: Codable {
     }
 
     public init(from decoder: Decoder) throws {
+        let options = decoder.userInfo[.moneyDecodingOptions] as? MoneyDecodingOptions ?? []
         if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
             let currencyCode = try keyedContainer.decode(String.self, forKey: .currencyCode)
             guard currencyCode == Currency.code else {
                 let context = DecodingError.Context(codingPath: keyedContainer.codingPath, debugDescription: "Currency mismatch: expected \(Currency.code), got \(currencyCode)")
                 throw DecodingError.typeMismatch(Money<Currency>.self, context)
             }
-            self.amount = try keyedContainer.decode(Decimal.self, forKey: .amount)
-        } else if let singleValueContainer = try? decoder.singleValueContainer() {
-            self.amount = try singleValueContainer.decode(Decimal.self)
+
+            var amount: Decimal?
+            if let string = try? keyedContainer.decode(String.self, forKey: .amount) {
+                amount = Decimal(string: string)
+            } else if !options.contains(.requireStringAmounts) {
+                amount = try keyedContainer.decode(Decimal.self, forKey: .amount)
+                if options.contains(.roundFloatingPointAmounts) {
+                    amount = amount?.rounded(for: Currency.self)
+                }
+            }
+
+            if let amount = amount {
+                self.amount = amount
+            } else {
+                throw DecodingError.dataCorruptedError(forKey: .amount, in: keyedContainer, debugDescription: "Couldn't decode Decimal value for amount")
+            }
+        } else if !options.contains(.requireExplicitCurrency),
+            let singleValueContainer = try? decoder.singleValueContainer()
+        {
+            var amount: Decimal?
+            if let string = try? singleValueContainer.decode(String.self) {
+                amount = Decimal(string: string)
+            } else if !options.contains(.requireStringAmounts) {
+                amount = try singleValueContainer.decode(Decimal.self)
+                if options.contains(.roundFloatingPointAmounts) {
+                    amount = amount?.rounded(for: Currency.self)
+                }
+            }
+
+            if let amount = amount {
+                self.amount = amount
+            } else {
+                throw DecodingError.dataCorruptedError(in: singleValueContainer, debugDescription: "Couldn't decode Decimal value for amount")
+            }
         } else {
             let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Couldn't decode Money value")
             throw DecodingError.dataCorrupted(context)
@@ -223,5 +306,17 @@ extension Money: Codable {
         var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
         try keyedContainer.encode(self.amount, forKey: .amount)
         try keyedContainer.encode(Currency.code, forKey: .currencyCode)
+    }
+}
+
+// MARK: -
+
+fileprivate extension Decimal {
+    func rounded(for currency: CurrencyType.Type) -> Decimal {
+        var approximate = self
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &approximate, currency.minorUnit, .bankers)
+
+        return rounded
     }
 }

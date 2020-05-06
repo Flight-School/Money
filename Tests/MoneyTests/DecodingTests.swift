@@ -3,7 +3,7 @@ import Foundation
 import Money
 
 final class DecodingTests: XCTestCase {
-    let decoder = JSONDecoder()
+    var decoder = JSONDecoder()
 
     func testDecodeKeyedContainerWithNumberAmount() throws {
         let json = #"""
@@ -13,10 +13,23 @@ final class DecodingTests: XCTestCase {
             }
         """#.data(using: .utf8)!
 
-        let actual = try decoder.decode(Money<USD>.self, from: json)
-        let expected = Money<USD>(Decimal(string: "27.31")!)
+        do {
+            XCTAssertNoThrow(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            decoder.moneyDecodingOptions = [.requireStringAmounts]
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+
+            let actual = try decoder.decode(Money<USD>.self, from: json)
+            let expected = Money<USD>(Decimal(string: "27.31")!)
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeKeyedContainerWithStringAmount() throws {
@@ -27,10 +40,47 @@ final class DecodingTests: XCTestCase {
              }
          """#.data(using: .utf8)!
 
-        let actual = try decoder.decode(Money<USD>.self, from: json)
-        let expected = Money<USD>(Decimal(string: "27.31")!)
+        do {
+            XCTAssertNoThrow(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            decoder.moneyDecodingOptions = [.requireStringAmounts]
+
+            let actual = try decoder.decode(Money<USD>.self, from: json)
+            let expected = Money<USD>(Decimal(string: "27.31")!)
+
+            XCTAssertEqual(actual, expected)
+        }
+    }
+
+    func testDecodeKeyedContainerWithPreciseStringAmount() throws {
+        let json = #"""
+             {
+                 "amount": "27.309999",
+                 "currencyCode": "USD"
+             }
+         """#.data(using: .utf8)!
+
+        do {
+            XCTAssertNoThrow(try decoder.decode(Money<USD>.self, from: json))
+        }
+
+        do {
+            let actual = try decoder.decode(Money<USD>.self, from: json)
+            let expected = Money<USD>(Decimal(string: "27.31")!)
+
+            XCTAssertNotEqual(actual, expected)
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+
+            let actual = try decoder.decode(Money<USD>.self, from: json)
+            let expected = Money<USD>(Decimal(string: "27.309999")!)
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeNumberAmount() throws {
@@ -40,10 +90,18 @@ final class DecodingTests: XCTestCase {
             ]
         """#.data(using: .utf8)!
 
-        let actual = try decoder.decode([Money<USD>].self, from: json)
-        let expected = [Money<USD>(Decimal(string: "27.31")!)]
+        do {
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [Money<USD>(Decimal(string: "27.31")!)]
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeNegativeNumberAmount() throws {
@@ -53,10 +111,18 @@ final class DecodingTests: XCTestCase {
               ]
           """#.data(using: .utf8)!
 
-        let actual = try decoder.decode([Money<USD>].self, from: json)
-        let expected = [Money<USD>(Decimal(string: "-27.31")!)]
+        do {
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [Money<USD>(Decimal(string: "-27.31")!)]
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeIntegerNumberAmount() throws {
@@ -66,10 +132,22 @@ final class DecodingTests: XCTestCase {
               ]
           """#.data(using: .utf8)!
 
-        let actual = try decoder.decode([Money<USD>].self, from: json)
-        let expected = [Money<USD>(Decimal(string: "27")!)]
+        do {
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
+        do {
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [Money<USD>(Decimal(string: "27")!)]
 
-        XCTAssertEqual(actual, expected)
+            XCTAssertEqual(actual, expected)
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.requireExplicitCurrency]
+            XCTAssertThrowsError(try decoder.decode([Money<USD>].self, from: json))
+        }
+
+
     }
 
     func testDecodeZeroNumberAmount() throws {
@@ -79,10 +157,16 @@ final class DecodingTests: XCTestCase {
               ]
           """#.data(using: .utf8)!
 
-        let actual = try decoder.decode([Money<USD>].self, from: json)
-        let expected = [Money<USD>(Decimal(string: "0")!)]
+        do {
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [Money<USD>(Decimal(string: "0")!)]
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeExponentNumberAmount() throws {
@@ -92,10 +176,18 @@ final class DecodingTests: XCTestCase {
               ]
           """#.data(using: .utf8)!
 
-        let actual = try decoder.decode([Money<USD>].self, from: json)
-        let expected = [Money<USD>(Decimal(string: "27.31")!)]
+        do {
+            XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+        }
 
-        XCTAssertEqual(actual, expected)
+        do {
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [Money<USD>(Decimal(string: "27.31")!)]
+
+            XCTAssertEqual(actual, expected)
+        }
     }
 
     func testDecodeKeyedContainerWithMismatchedCurrency() throws {
@@ -115,6 +207,17 @@ final class DecodingTests: XCTestCase {
                 "amount": 27.31,
             }
         """#.data(using: .utf8)!
+
+        XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
+    }
+
+    func testDecodeKeyedContainerWithInvalidStringAmount() throws {
+        let json = #"""
+               {
+                   "amount": "One Million Dollars"
+                   "currencyCode": "USD"
+               }
+           """#.data(using: .utf8)!
 
         XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
     }
@@ -141,6 +244,7 @@ final class DecodingTests: XCTestCase {
     static var allTests = [
         ("testDecodeKeyedContainerWithNumberAmount", testDecodeKeyedContainerWithNumberAmount),
         ("testDecodeKeyedContainerWithStringAmount", testDecodeKeyedContainerWithStringAmount),
+        ("testDecodeKeyedContainerWithPreciseStringAmount", testDecodeKeyedContainerWithPreciseStringAmount),
         ("testDecodeNumberAmount", testDecodeNumberAmount),
         ("testDecodeNegativeNumberAmount", testDecodeNegativeNumberAmount),
         ("testDecodeIntegerNumberAmount", testDecodeIntegerNumberAmount),
@@ -148,6 +252,7 @@ final class DecodingTests: XCTestCase {
         ("testDecodeExponentNumberAmount", testDecodeExponentNumberAmount),
         ("testDecodeKeyedContainerWithMismatchedCurrency", testDecodeKeyedContainerWithMismatchedCurrency),
         ("testDecodeKeyedContainerWithMissingCurrency", testDecodeKeyedContainerWithMissingCurrency),
+        ("testDecodeKeyedContainerWithInvalidStringAmount", testDecodeKeyedContainerWithInvalidStringAmount),
         ("testDecodeKeyedContainerWithMissingAmount", testDecodeKeyedContainerWithMissingAmount),
         ("testDecodeEmptyKeyedContainer", testDecodeEmptyKeyedContainer),
     ]
