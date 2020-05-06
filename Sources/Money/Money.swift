@@ -216,6 +216,16 @@ extension CodingUserInfoKey {
      - SeeAlso: `JSONDecoder.moneyDecodingOptions`
      */
     public static let moneyDecodingOptions = CodingUserInfoKey(rawValue: "com.flightschool.money.decoding-options")!
+
+    /**
+     The key for specifying custom encoding options for `Money` values.
+
+     This user info key should be associated with
+     an `MoneyEncodingOptions` object.
+
+     - SeeAlso: `JSONDecoder.moneyEncodingOptions`
+     */
+    public static let moneyEncodingOptions = CodingUserInfoKey(rawValue: "com.flightschool.money.encoding-options")!
 }
 
 /**
@@ -260,6 +270,35 @@ public struct MoneyDecodingOptions: OptionSet {
      when decoding from a floating-point number.
      */
     public static let roundFloatingPointAmount = MoneyDecodingOptions(rawValue: 1 << 2)
+}
+
+/**
+ Custom encoding options for `Money` values.
+
+ Configure the encoding behavior either
+ by using the `JSONDecoder.moneyEncodingOptions` property
+ or by setting the `CodingUserInfoKey.moneyEncodingOptions` key
+ in the encoder's `userInfo` property.
+ */
+public struct MoneyEncodingOptions: OptionSet {
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    /**
+     Encodes the `Money` value as a single value,
+     without specifying a currency.
+     */
+    public static let omitCurrency = MoneyEncodingOptions(rawValue: 1 << 0)
+
+
+    /**
+     Encodes the string representation of `amount`
+     instead of the built-in `Decimal` encoding.
+    */
+    public static let encodeAmountAsString = MoneyEncodingOptions(rawValue: 1 << 1)
 }
 
 extension Money: Codable {
@@ -318,9 +357,24 @@ extension Money: Codable {
     }
 
     public func encode(to encoder: Encoder) throws {
-        var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
-        try keyedContainer.encode(self.amount, forKey: .amount)
-        try keyedContainer.encode(Currency.code, forKey: .currencyCode)
+        let options = encoder.userInfo[.moneyEncodingOptions] as? MoneyEncodingOptions ?? []
+
+        if options.contains(.omitCurrency) {
+            var singleValueContainer = encoder.singleValueContainer()
+            if options.contains(.encodeAmountAsString) {
+                try singleValueContainer.encode(self.amount.description)
+            } else {
+                try singleValueContainer.encode(self.amount)
+            }
+        } else {
+            var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
+            try keyedContainer.encode(Currency.code, forKey: .currencyCode)
+            if options.contains(.encodeAmountAsString) {
+                try keyedContainer.encode(self.amount.description, forKey: .amount)
+            } else {
+                try keyedContainer.encode(self.amount, forKey: .amount)
+            }
+        }
     }
 }
 
