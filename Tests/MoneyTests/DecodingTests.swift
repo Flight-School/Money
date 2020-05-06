@@ -18,12 +18,12 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.requireStringAmounts]
+            decoder.moneyDecodingOptions = [.requireStringAmount]
             XCTAssertThrowsError(try decoder.decode(Money<USD>.self, from: json))
         }
 
         do {
-            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
 
             let actual = try decoder.decode(Money<USD>.self, from: json)
             let expected = Money<USD>(Decimal(string: "27.31")!)
@@ -45,7 +45,7 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.requireStringAmounts]
+            decoder.moneyDecodingOptions = [.requireStringAmount]
 
             let actual = try decoder.decode(Money<USD>.self, from: json)
             let expected = Money<USD>(Decimal(string: "27.31")!)
@@ -74,7 +74,7 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
 
             let actual = try decoder.decode(Money<USD>.self, from: json)
             let expected = Money<USD>(Decimal(string: "27.309999")!)
@@ -95,7 +95,7 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
 
             let actual = try decoder.decode([Money<USD>].self, from: json)
             let expected = [Money<USD>(Decimal(string: "27.31")!)]
@@ -116,7 +116,7 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
 
             let actual = try decoder.decode([Money<USD>].self, from: json)
             let expected = [Money<USD>(Decimal(string: "-27.31")!)]
@@ -181,7 +181,7 @@ final class DecodingTests: XCTestCase {
         }
 
         do {
-            decoder.moneyDecodingOptions = [.roundFloatingPointAmounts]
+            decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
 
             let actual = try decoder.decode([Money<USD>].self, from: json)
             let expected = [Money<USD>(Decimal(string: "27.31")!)]

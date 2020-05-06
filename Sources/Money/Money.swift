@@ -253,13 +253,13 @@ public struct MoneyDecodingOptions: OptionSet {
                   be precisely decoded from string values.
      - Bug: See https://bugs.swift.org/browse/SR-7054.
      */
-    public static let requireStringAmounts = MoneyDecodingOptions(rawValue: 1 << 1)
+    public static let requireStringAmount = MoneyDecodingOptions(rawValue: 1 << 1)
 
     /**
      Rounds `amount` to the number of places of the minor currency unit
      when decoding from a floating-point number.
      */
-    public static let roundFloatingPointAmounts = MoneyDecodingOptions(rawValue: 1 << 2)
+    public static let roundFloatingPointAmount = MoneyDecodingOptions(rawValue: 1 << 2)
 }
 
 extension Money: Codable {
@@ -270,6 +270,7 @@ extension Money: Codable {
 
     public init(from decoder: Decoder) throws {
         let options = decoder.userInfo[.moneyDecodingOptions] as? MoneyDecodingOptions ?? []
+
         if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
             let currencyCode = try keyedContainer.decode(String.self, forKey: .currencyCode)
             guard currencyCode == Currency.code else {
@@ -280,9 +281,9 @@ extension Money: Codable {
             var amount: Decimal?
             if let string = try? keyedContainer.decode(String.self, forKey: .amount) {
                 amount = Decimal(string: string)
-            } else if !options.contains(.requireStringAmounts) {
+            } else if !options.contains(.requireStringAmount) {
                 amount = try keyedContainer.decode(Decimal.self, forKey: .amount)
-                if options.contains(.roundFloatingPointAmounts) {
+                if options.contains(.roundFloatingPointAmount) {
                     amount = amount?.rounded(for: Currency.self)
                 }
             }
@@ -298,9 +299,9 @@ extension Money: Codable {
             var amount: Decimal?
             if let string = try? singleValueContainer.decode(String.self) {
                 amount = Decimal(string: string)
-            } else if !options.contains(.requireStringAmounts) {
+            } else if !options.contains(.requireStringAmount) {
                 amount = try singleValueContainer.decode(Decimal.self)
-                if options.contains(.roundFloatingPointAmounts) {
+                if options.contains(.roundFloatingPointAmount) {
                     amount = amount?.rounded(for: Currency.self)
                 }
             }
