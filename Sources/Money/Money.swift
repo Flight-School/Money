@@ -226,7 +226,7 @@ public struct MoneyDecodingOptions: OptionSet {
      By default, `Money` values are decoded from single values
      using the associated `Currency` type.
      */
-    public static let requireExplicitCurrency = MoneyDecodingOptions(rawValue: 1 << 1)
+    public static let requireExplicitCurrency = MoneyDecodingOptions(rawValue: 1 << 0)
 
     /**
      Throws an error when attempting to decode
@@ -239,13 +239,13 @@ public struct MoneyDecodingOptions: OptionSet {
                   be precisely decoded from string values.
      - Bug: See https://bugs.swift.org/browse/SR-7054.
      */
-    public static let requireStringAmounts = MoneyDecodingOptions(rawValue: 1 << 2)
+    public static let requireStringAmounts = MoneyDecodingOptions(rawValue: 1 << 1)
 
     /**
      Rounds `amount` to the number of places of the minor currency unit
      when decoding from a floating-point number.
      */
-    public static let roundFloatingPointAmounts = MoneyDecodingOptions(rawValue: 1 << 3)
+    public static let roundFloatingPointAmounts = MoneyDecodingOptions(rawValue: 1 << 2)
 }
 
 extension Money: Codable {
