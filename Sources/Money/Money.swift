@@ -24,66 +24,19 @@ public struct Money<Currency: CurrencyType>: Equatable, Hashable {
     }
 }
 
+// MARK: - Comparable
+
 extension Money: Comparable {
     public static func < (lhs: Money<Currency>, rhs: Money<Currency>) -> Bool {
         return lhs.amount < rhs.amount
     }
 }
 
-extension Money: CustomStringConvertible {
-    public var description: String {
-        return "\(self.amount)"
-    }
-}
+// MARK: - AdditiveArithmetic
 
-extension Money: LosslessStringConvertible {
-    public init?(_ description: String) {
-        guard let amount = Decimal(string: description) else {
-            return nil
-        }
-
-        self.init(amount)
-    }
-}
-
-extension Money: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: Int) {
-        self.init(Decimal(integerLiteral: value))
-    }
-}
-
-extension Money: ExpressibleByFloatLiteral {
-    /**
-     Creates a new value from the given floating-point literal.
-     
-     - Important: Swift floating-point literals are currently initialized
-                  using binary floating-point number type,
-                  which cannot precisely express certain values.
-                  As a workaround, monetary amounts initialized
-                  from a floating-point literal are rounded
-                  to the number of places of the minor currency unit.
-                  To express a smaller fractional monetary amount,
-                  initialize from a string literal or decimal value instead.
-     - Bug: See https://bugs.swift.org/browse/SR-920
-    */
-    public init(floatLiteral value: Double) {
-        self.init(Decimal(floatLiteral: value).rounded(for: Currency.self))
-    }
-}
-
-extension Money: ExpressibleByStringLiteral {
-    public init(unicodeScalarLiteral value: Unicode.Scalar) {
-        self.init(stringLiteral: String(value))
-    }
-
-    public init(extendedGraphemeClusterLiteral value: Character) {
-        self.init(stringLiteral: String(value))
-    }
-
-    public init(stringLiteral value: String) {
-        self.init(value)!
-    }
-}
+#if swift(>=5.0)
+extension Money: AdditiveArithmetic {}
+#endif
 
 extension Money {
     /// The sum of two monetary amounts.
@@ -107,9 +60,12 @@ extension Money {
     }
 }
 
-#if swift(>=5.0)
-extension Money: AdditiveArithmetic {}
-#endif
+extension Money {
+    /// Subtracts one monetary amount from another.
+    public static prefix func - (value: Money<Currency>) -> Money<Currency> {
+        return Money<Currency>(-value.amount)
+    }
+}
 
 extension Money {
     /// The product of a monetary amount and a scalar value.
@@ -119,7 +75,7 @@ extension Money {
 
     /**
         The product of a monetary amount and a scalar value.
-     
+
         - Important: Multiplying a monetary amount by a floating-point number
                      results in an amount rounded to the number of places
                      of the minor currency unit.
@@ -142,7 +98,7 @@ extension Money {
 
     /**
         The product of a monetary amount and a scalar value.
-     
+
         - Important: Multiplying a monetary amount by a floating-point number
                      results in an amount rounded to the number of places
                      of the minor currency unit.
@@ -166,7 +122,7 @@ extension Money {
     /// Multiplies a monetary amount by a scalar value.
     /**
         Multiplies a monetary amount by a scalar value.
-     
+
         - Important: Multiplying a monetary amount by a floating-point number
                      results in an amount rounded to the number of places
                      of the minor currency unit.
@@ -183,14 +139,72 @@ extension Money {
     }
 }
 
-extension Money {
-    /// Subtracts one monetary amount from another.
-    public static prefix func - (value: Money<Currency>) -> Money<Currency> {
-        return Money<Currency>(-value.amount)
+// MARK: - CustomStringConvertible
+
+extension Money: CustomStringConvertible {
+    public var description: String {
+        return "\(self.amount)"
     }
 }
 
-// MARK: -
+// MARK: - LosslessStringConvertible
+
+extension Money: LosslessStringConvertible {
+    public init?(_ description: String) {
+        guard let amount = Decimal(string: description) else {
+            return nil
+        }
+
+        self.init(amount)
+    }
+}
+
+// MARK: - ExpressibleByIntegerLiteral
+
+extension Money: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int) {
+        self.init(Decimal(integerLiteral: value))
+    }
+}
+
+// MARK: - ExpressibleByFloatLiteral
+
+extension Money: ExpressibleByFloatLiteral {
+    /**
+     Creates a new value from the given floating-point literal.
+     
+     - Important: Swift floating-point literals are currently initialized
+                  using binary floating-point number type,
+                  which cannot precisely express certain values.
+                  As a workaround, monetary amounts initialized
+                  from a floating-point literal are rounded
+                  to the number of places of the minor currency unit.
+                  To express a smaller fractional monetary amount,
+                  initialize from a string literal or decimal value instead.
+     - Bug: See https://bugs.swift.org/browse/SR-920
+    */
+    public init(floatLiteral value: Double) {
+        self.init(Decimal(floatLiteral: value).rounded(for: Currency.self))
+    }
+}
+
+// MARK: - ExpressibleByStringLiteral
+
+extension Money: ExpressibleByStringLiteral {
+    public init(unicodeScalarLiteral value: Unicode.Scalar) {
+        self.init(stringLiteral: String(value))
+    }
+
+    public init(extendedGraphemeClusterLiteral value: Character) {
+        self.init(stringLiteral: String(value))
+    }
+
+    public init(stringLiteral value: String) {
+        self.init(value)!
+    }
+}
+
+// MARK: - Codable
 
 extension CodingUserInfoKey {
     /**
