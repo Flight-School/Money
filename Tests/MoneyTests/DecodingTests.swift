@@ -83,6 +83,37 @@ final class DecodingTests: XCTestCase {
         }
     }
 
+    func testDecodeUnkeyedContainerWithHeterogeneousRepresentations() throws {
+        let json = #"""
+            [
+                { "currencyCode": "USD", "amount": "100.00" },
+                50.00,
+                "10"
+            ]
+        """#.data(using: .utf8)!
+
+        do {
+            let actual = try decoder.decode([Money<USD>].self, from: json)
+            let expected = [
+                Money<USD>(Decimal(string: "100.00")!),
+                Money<USD>(Decimal(string: "50.00")!),
+                Money<USD>(Decimal(string: "10.00")!),
+            ]
+
+            XCTAssertEqual(actual, expected)
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.requireExplicitCurrency]
+            XCTAssertThrowsError(try decoder.decode([Money<USD>].self, from: json))
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.requireStringAmount]
+            XCTAssertThrowsError(try decoder.decode([Money<USD>].self, from: json))
+        }
+    }
+
     func testDecodeNumberAmount() throws {
         let json = #"""
             [
@@ -245,6 +276,7 @@ final class DecodingTests: XCTestCase {
         ("testDecodeKeyedContainerWithNumberAmount", testDecodeKeyedContainerWithNumberAmount),
         ("testDecodeKeyedContainerWithStringAmount", testDecodeKeyedContainerWithStringAmount),
         ("testDecodeKeyedContainerWithPreciseStringAmount", testDecodeKeyedContainerWithPreciseStringAmount),
+        ("testDecodeUnkeyedContainerWithHeterogeneousRepresentations", testDecodeUnkeyedContainerWithHeterogeneousRepresentations),
         ("testDecodeNumberAmount", testDecodeNumberAmount),
         ("testDecodeNegativeNumberAmount", testDecodeNegativeNumberAmount),
         ("testDecodeIntegerNumberAmount", testDecodeIntegerNumberAmount),
