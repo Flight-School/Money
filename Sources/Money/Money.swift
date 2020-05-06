@@ -257,10 +257,10 @@ public struct MoneyDecodingOptions: OptionSet {
      `amount` from a floating-point number.
 
      - Important: Foundation decoders currently decode number values
-                  using binary floating-point number type,
+                  using a binary floating-point number type,
                   which cannot precisely express certain values.
-                  Monetary amounts can, however,
-                  be precisely decoded from string values.
+                  Specify this option to require monetary amounts
+                  to be decoded precisely from string representations.
      - Bug: See https://bugs.swift.org/browse/SR-7054.
      */
     public static let requireStringAmount = MoneyDecodingOptions(rawValue: 1 << 1)
