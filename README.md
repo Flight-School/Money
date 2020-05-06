@@ -168,6 +168,111 @@ formatter.currencyCode = allowance.currency.code
 formatter.string(for: allowance.amount) // "10,00 $US"
 ```
 
+### Encoding and Decoding Monetary Amounts
+
+#### Encoding
+
+By default,
+`Money` values are encoded as keyed containers,
+with `amount` encoded as a number value.
+
+```swift
+let value: Money<USD> = 123.45
+
+let encoder = JSONEncoder()
+let data = try encoder.encode(value)
+String(data: data, encoding: .utf8) // #"{"amount":123.45,"currencyCode":"USD"}"#
+```
+
+To configure encoding behavior,
+set either the `JSONEncoder.moneyEncodingOptions` property
+or the `CodingUserInfoKey.moneyEncodingOptions` key
+in the encoder's `userInfo` property.
+
+```swift
+var encoder = JSONEncoder()
+encoder.moneyEncodingOptions = [.omitCurrency, .encodeAmountAsString]
+
+let data = try encoder.encode([value])
+String(data: data, encoding: .utf8) // #"["123.45"]"#
+```
+
+#### Decoding
+
+The default decoding behavior is flexible,
+supporting both keyed and single value containers,
+with string or number values for `amount`.
+
+```swift
+let json = #"""
+[
+    { "currencyCode": "USD", "amount": "100.00" },
+    50.00,
+    "10"
+]
+"""#.data(using: .utf8)!
+
+let decoder = JSONDecoder()
+let values = try decoder.decode([Money<USD>].self, from: json)
+values.first?.amount // 100.00
+values.last?.currency.code // "USD"
+```
+
+To configure decoding behavior,
+set either the `JSONDecoder.moneyDecodingOptions` property
+or the `CodingUserInfoKey.moneyDecodingOptions` key
+in the decoder's `userInfo` property.
+
+```swift
+var decoder = JSONDecoder()
+decoder.moneyDecodingOptions = [.requireExplicitCurrency]
+```
+
+**Important**:
+Foundation decoders currently decode number values
+using a binary floating-point number type,
+which cannot precisely express certain values.
+As a workaround,
+you can specify the `requireStringAmount` decoding option
+to require monetary amounts to be
+decoded precisely from a string representation.
+
+```swift
+let json = #"""
+{ "currencyCode": "USD", "amount": "27.31" }
+"""#.data(using: .utf8)!
+
+var decoder = JSONDecoder()
+
+try decoder.decode(Money<USD>.self, from: json) // DecodingError
+
+decoder.moneyDecodingOptions = [.requireStringAmount]
+let preciseAmount = try decoder.decode(Money<USD>.self, from: json)
+preciseAmount.amount // 27.31
+```
+
+Alternatively,
+you can the `roundFloatingPointAmount` decoding option
+to round decoded floating-point values
+to the number of places of the minor currency unit.
+
+```swift
+let json = #"""
+{ "currencyCode": "USD", "amount": 27.31 }
+"""#.data(using: .utf8)!
+
+var decoder = JSONDecoder()
+
+let impreciseAmount = try decoder.decode(Money<USD>.self, from: json)
+impreciseAmount.amount // 27.30999999...
+
+decoder.moneyDecodingOptions = [.roundFloatingPointAmount]
+let roundedAmount = try decoder.decode(Money<USD>.self, from: json)
+roundedAmount.amount // 27.31
+```
+
+For more information, see https://bugs.swift.org/browse/SR-7054.
+
 ### Supporting Multiple Currencies
 
 Consider a `Product` structure with a `price` property.

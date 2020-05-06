@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Added
+
+- Added configurable encoding and decoding behavior.
+  #9 by @mattt.
 
 ## [1.1.1] - 2019-05-11
 
