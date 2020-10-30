@@ -26,6 +26,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Sources/**/*.swift'
 
-  s.swift_version = '4.2'
+  s.swift_versions = ['4.2', '5.0', '5.1', '5.2', '5.3']
   s.static_framework = true
 end
