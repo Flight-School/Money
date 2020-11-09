@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Money-FlightSchool'
   s.module_name  = 'Money'
-  s.version      = '1.2.0'
+  s.version      = '1.2.1'
   s.summary      = 'A precise, type-safe representation of monetary amounts in a given currency.'
 
   s.description  = <<-DESC
