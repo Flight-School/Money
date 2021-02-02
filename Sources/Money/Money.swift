@@ -200,6 +200,12 @@ extension Money: ExpressibleByStringLiteral {
     }
 
     public init(stringLiteral value: String) {
+        let isNotNumber = value.isEmpty || value.contains { !$0.isNumber }
+        guard !isNotNumber else {
+          self.init("0")!
+          return
+        }
+
         self.init(value)!
     }
 }
@@ -319,7 +325,8 @@ extension Money: Codable {
 
             var amount: Decimal?
             if let string = try? keyedContainer.decode(String.self, forKey: .amount) {
-                amount = Decimal(string: string)
+                let nonEmptyString = string.isEmpty ? "0" : string
+                amount = Decimal(string: nonEmptyString)
             } else if !options.contains(.requireStringAmount) {
                 amount = try keyedContainer.decode(Decimal.self, forKey: .amount)
                 if options.contains(.roundFloatingPointAmount) {
@@ -337,7 +344,8 @@ extension Money: Codable {
         {
             var amount: Decimal?
             if let string = try? singleValueContainer.decode(String.self) {
-                amount = Decimal(string: string)
+                let nonEmptyString = string.isEmpty ? "0" : string
+                amount = Decimal(string: nonEmptyString)
             } else if !options.contains(.requireStringAmount) {
                 amount = try singleValueContainer.decode(Decimal.self)
                 if options.contains(.roundFloatingPointAmount) {
