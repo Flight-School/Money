@@ -83,6 +83,22 @@ let amount = Decimal(12)
 let monetaryAmount = Money<USD>(amount)
 ```
 
+Some currencies specify a minor unit.
+For example, USD amounts are often expressed in cents,
+each worth 1/100 of a dollar.
+You can initialize monetary amounts from a quantity of minor units.
+For currencies that don't have a minor unit,
+such as JPY,
+this is equivalent to the standard initializer.
+
+```swift
+let twoCents = Money<USD>(minorUnits: 2)
+twoCents.amount // 0.02
+
+let ichimonEn = Money<JPY>(minorUnits: 10_000)
+ichimonEn.amount // 10000
+```
+
 You can also create monetary amounts using
 integer, floating-point, and string literals.
 
