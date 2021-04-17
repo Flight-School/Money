@@ -10,6 +10,17 @@ public struct Money<Currency: CurrencyType>: Equatable, Hashable {
         self.amount = amount
     }
 
+    public init(minorUnits: Int) {
+        precondition(Currency.minorUnit >= 0)
+
+        let sign: FloatingPointSign = minorUnits >= 0 ? .plus : .minus
+        let exponent = -Currency.minorUnit
+        let significand = Decimal(minorUnits)
+
+        let amount = Decimal(sign: sign, exponent: exponent, significand: significand)
+        self.init(amount)
+    }
+
     /// The currency type.
     public var currency: CurrencyType.Type {
         return Currency.self

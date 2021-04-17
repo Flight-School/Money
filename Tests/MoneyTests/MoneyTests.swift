@@ -14,7 +14,16 @@ final class MoneyTests: XCTestCase {
         XCTAssertEqual(total.amount, Decimal(string: "39.45", locale: nil))
     }
 
+    func testMinorUnits() {
+        let twoCents = Money<USD>(minorUnits: 2) // $0.02
+        XCTAssertEqual(twoCents.amount, Decimal(string: "0.02", locale: nil))
+
+        let ichimonEn = Money<JPY>(minorUnits: 10_000) // ¥10,000
+        XCTAssertEqual(ichimonEn.amount, Decimal(string: "10000", locale: nil))
+    }
+
     static var allTests = [
         ("testMonetaryCalculations", testMonetaryCalculations),
+        ("testMinorUnits", testMinorUnits),
     ]
 }

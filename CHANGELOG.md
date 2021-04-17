@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added initializer from a currency's minor units.
+  #15 by @mattt.
+
 ## [1.2.1] - 2020-11-09
 
 ### Changed
