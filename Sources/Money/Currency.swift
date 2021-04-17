@@ -27,10 +27,10 @@ public protocol CurrencyType {
 ///
 /// Currency codes are checked according to a strict, case-sensitive equality comparison.
 ///
-/// - Important: This method returns only currencies defined in the `Money` module.
+/// - Important: This function returns only currencies defined in the `Money` module.
 ///              For example,
 ///              if you define a new type that adopts `CurrencyType`,
-///              calling this method with that currency type's `code` returns `nil`.
+///              calling `iso4217Currency(for:)` with that currency type's `code` returns `nil`.
 ///
 ///
 /// - Parameter code: The ISO 4217 currency code
