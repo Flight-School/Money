@@ -483,9 +483,9 @@ Mattt ([@mattt](https://twitter.com/mattt))
 
 [build status]: https://github.com/Flight-School/Money/actions?query=workflow%3ACI
 [build status badge]: https://github.com/Flight-School/Money/workflows/CI/badge.svg
-[currency.swift]: https://github.com/Flight-School/Money/blob/master/Sources/Money/Currency.swift
+[currency.swift]: https://github.com/Flight-School/Money/blob/main/Sources/Money/Currency.swift
 [iso4217]: https://en.wikipedia.org/wiki/ISO_4217
-[iso4217.csv]: https://github.com/Flight-School/Money/blob/master/Resources/iso4217.csv
+[iso4217.csv]: https://github.com/Flight-School/Money/blob/main/Resources/iso4217.csv
 [gyb]: https://nshipster.com/swift-gyb/
 [license]: https://opensource.org/licenses/MIT
 [license badge]: https://img.shields.io/cocoapods/l/Money-FlightSchool.svg

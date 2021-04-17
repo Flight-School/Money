@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/SwiftDocOrg/doctest/compare/1.2.0...master
+[unreleased]: https://github.com/SwiftDocOrg/doctest/compare/1.2.0...main
 [1.2.0]: https://github.com/SwiftDocOrg/swift-doc/releases/tag/1.2.0
 [1.1.1]: https://github.com/SwiftDocOrg/swift-doc/releases/tag/1.1.1
 [1.1.0]: https://github.com/SwiftDocOrg/swift-doc/releases/tag/1.1.0
