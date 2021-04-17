@@ -389,6 +389,14 @@ $ make
 > Please [open an issue](https://github.com/Flight-School/Money/issues/new)
 > if you're aware of any new amendments made to ISO 4217.
 
+You can lookup any built-in currency types by its three-letter code
+using the `iso4217Currency(for:)` function.
+
+```swift
+iso4217Currency(for: "USD")?.name // "US Dollar"
+iso4217Currency(for: "invalid") // nil
+```
+
 ### Adding Custom Currencies
 
 You can create your own custom currency types by defining an enumeration
@@ -418,6 +426,10 @@ formatter.maximumFractionDigits = 8
 
 formatter.string(for: satoshi.amount) // ₿0.00000001
 ```
+
+> **Important**:
+> The `iso4217Currency(for:) returns only built-in currencies,
+> so calling `iso4217Currency(for: "BTC")` would return `nil`.
 
 ### Showing Off with Emoji
 

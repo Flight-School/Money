@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added initializer from a currency's minor units.
   #15 by @mattt.
+- Added top-level `iso4217Currency(for:)` function.
+  #16 by @mattt.
 
 ## [1.2.1] - 2020-11-09
 

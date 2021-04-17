@@ -24,6 +24,37 @@ public protocol CurrencyType {
     static var minorUnit: Int { get }
 }
 
+/// Returns the ISO 4217 currency associated with a given code.
+///
+/// Currency codes are checked according to a strict, case-sensitive equality comparison.
+///
+/// - Important: This method returns only currencies defined in the `Money` module.
+///              For example,
+///              if you define a new type that adopts `CurrencyType`,
+///              calling this method with that currency type's `code` returns `nil`.
+///
+/// - Parameter code: The ISO 4217 currency code
+/// - Returns: A `CurrencyType` type, if one
+public func iso4217Currency(for code: String) -> CurrencyType.Type? {
+    switch code {
+%{
+  import csv
+}%
+% with open('../../Resources/iso4217.csv') as file:
+    % for row in csv.DictReader(file):
+%{
+code = row["Code"]
+}%
+        % if code:
+    case "${code}": return ${code}.self
+        %end
+    %end
+%end
+    default:
+        return nil
+    }
+}
+
 %{
   import csv
 }%
