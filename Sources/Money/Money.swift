@@ -72,7 +72,7 @@ extension Money {
 }
 
 extension Money {
-    /// Changes the sign (plus to minus or vice versa) of the monetary amount.
+    /// Flips the sign (plus to minus or vice versa) of the monetary amount.
     public static prefix func - (value: Money<Currency>) -> Money<Currency> {
         return Money<Currency>(-value.amount)
     }
