@@ -247,12 +247,7 @@ extension CodingUserInfoKey {
  or by setting the `CodingUserInfoKey.moneyDecodingOptions` key
  in the decoder's `userInfo` property.
  */
-public struct MoneyDecodingOptions: OptionSet {
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
+public enum MoneyDecodingOptions: Equatable {
 
     /**
      Throws a `DecodingError` when attempting to decode
@@ -261,7 +256,7 @@ public struct MoneyDecodingOptions: OptionSet {
      By default, `Money` values are decoded from single values
      using the associated `Currency` type.
      */
-    public static let requireExplicitCurrency = MoneyDecodingOptions(rawValue: 1 << 0)
+    case requireExplicitCurrency
 
     /**
      Throws an error when attempting to decode
@@ -274,13 +269,19 @@ public struct MoneyDecodingOptions: OptionSet {
                   to be decoded precisely from string representations.
      - Bug: See https://bugs.swift.org/browse/SR-7054.
      */
-    public static let requireStringAmount = MoneyDecodingOptions(rawValue: 1 << 1)
+    case requireStringAmount
 
     /**
      Rounds `amount` to the number of places of the minor currency unit
      when decoding from a floating-point number.
      */
-    public static let roundFloatingPointAmount = MoneyDecodingOptions(rawValue: 1 << 2)
+    case roundFloatingPointAmount
+
+    /**
+     Decodes the string key of `amount` and/or `currencyCode`
+     with user defined values.
+     */
+    case customKeys([MoneyCodingKey: String])
 }
 
 /**
@@ -291,48 +292,51 @@ public struct MoneyDecodingOptions: OptionSet {
  or by setting the `CodingUserInfoKey.moneyEncodingOptions` key
  in the encoder's `userInfo` property.
  */
-public struct MoneyEncodingOptions: OptionSet {
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
+public enum MoneyEncodingOptions: Equatable {
 
     /**
      Encodes the `Money` value as a single value,
      without specifying a currency.
      */
-    public static let omitCurrency = MoneyEncodingOptions(rawValue: 1 << 0)
-
+    case omitCurrency
 
     /**
      Encodes the string representation of `amount`
      instead of the built-in `Decimal` encoding.
     */
-    public static let encodeAmountAsString = MoneyEncodingOptions(rawValue: 1 << 1)
+    case encodeAmountAsString
+
+    /**
+     Encodes the string key of `amount` and/or `currencyCode`
+     with user defined values.
+     */
+    case customKeys([MoneyCodingKey: String])
+}
+
+public enum MoneyCodingKey: String {
+    case amount
+    case currencyCode
 }
 
 extension Money: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case amount
-        case currencyCode
-    }
-
     public init(from decoder: Decoder) throws {
-        let options = decoder.userInfo[.moneyDecodingOptions] as? MoneyDecodingOptions ?? []
+        let options = decoder.userInfo[.moneyDecodingOptions] as? [MoneyDecodingOptions] ?? []
 
-        if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
-            let currencyCode = try keyedContainer.decode(String.self, forKey: .currencyCode)
+        if let keyedContainer = try? decoder.container(keyedBy: StringKey.self) {
+            let keyMap = options.compactMap(Money.keyMap).first
+            let currencyKey = try Money.codingKey(for: .currencyCode, in: keyMap)
+            let currencyCode = try keyedContainer.decode(String.self, forKey: currencyKey)
             guard currencyCode == Currency.code else {
                 let context = DecodingError.Context(codingPath: keyedContainer.codingPath, debugDescription: "Currency mismatch: expected \(Currency.code), got \(currencyCode)")
                 throw DecodingError.typeMismatch(Money<Currency>.self, context)
             }
 
+            let amountKey = try Money.codingKey(for: .amount, in: keyMap)
             var amount: Decimal?
-            if let string = try? keyedContainer.decode(String.self, forKey: .amount) {
+            if let string = try? keyedContainer.decode(String.self, forKey: amountKey) {
                 amount = Decimal(string: string)
             } else if !options.contains(.requireStringAmount) {
-                amount = try keyedContainer.decode(Decimal.self, forKey: .amount)
+                amount = try keyedContainer.decode(Decimal.self, forKey: amountKey)
                 if options.contains(.roundFloatingPointAmount) {
                     amount = amount?.rounded(for: Currency.self)
                 }
@@ -341,7 +345,7 @@ extension Money: Codable {
             if let amount = amount {
                 self.amount = amount
             } else {
-                throw DecodingError.dataCorruptedError(forKey: .amount, in: keyedContainer, debugDescription: "Couldn't decode Decimal value for amount")
+                throw DecodingError.dataCorruptedError(forKey: amountKey, in: keyedContainer, debugDescription: "Couldn't decode Decimal value for amount")
             }
         } else if !options.contains(.requireExplicitCurrency),
             let singleValueContainer = try? decoder.singleValueContainer()
@@ -368,7 +372,7 @@ extension Money: Codable {
     }
 
     public func encode(to encoder: Encoder) throws {
-        let options = encoder.userInfo[.moneyEncodingOptions] as? MoneyEncodingOptions ?? []
+        let options = encoder.userInfo[.moneyEncodingOptions] as? [MoneyEncodingOptions] ?? []
 
         if options.contains(.omitCurrency) {
             var singleValueContainer = encoder.singleValueContainer()
@@ -378,13 +382,50 @@ extension Money: Codable {
                 try singleValueContainer.encode(self.amount)
             }
         } else {
-            var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
-            try keyedContainer.encode(Currency.code, forKey: .currencyCode)
+            var keyedContainer = encoder.container(keyedBy: StringKey.self)
+            let keyMap = options.compactMap(Money.keyMap).first
+            let currencyKey = try Money.codingKey(for: .currencyCode, in: keyMap)
+            try keyedContainer.encode(Currency.code, forKey: currencyKey)
+            let amountKey = try Money.codingKey(for: .amount, in: keyMap)
             if options.contains(.encodeAmountAsString) {
-                try keyedContainer.encode(self.amount.description, forKey: .amount)
+                try keyedContainer.encode(self.amount.description, forKey: amountKey)
             } else {
-                try keyedContainer.encode(self.amount, forKey: .amount)
+                try keyedContainer.encode(self.amount, forKey: amountKey)
             }
+        }
+    }
+
+    static func keyMap(
+        option: MoneyDecodingOptions
+    ) -> [MoneyCodingKey: String]? {
+        switch option {
+        case .customKeys(let keyMap):
+            return keyMap
+        default:
+            return nil
+        }
+    }
+
+    static func keyMap(
+        option: MoneyEncodingOptions
+    ) -> [MoneyCodingKey: String]? {
+        switch option {
+        case .customKeys(let keyMap):
+            return keyMap
+        default:
+            return nil
+        }
+    }
+
+    static func codingKey(
+        for key: MoneyCodingKey,
+        in keyMap: [MoneyCodingKey: String]? = nil
+    ) throws -> StringKey {
+        if let keyMap = keyMap,
+           let value = keyMap[key] {
+            return StringKey(value)
+        } else {
+            return StringKey(key.rawValue)
         }
     }
 }
