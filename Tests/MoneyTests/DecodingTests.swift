@@ -9,7 +9,7 @@ final class DecodingTests: XCTestCase {
         let json = #"""
             {
                 "amount": 27.31,
-                "currencyCode": "USD"
+                "currency": "USD"
             }
         """#.data(using: .utf8)!
 
@@ -36,7 +36,7 @@ final class DecodingTests: XCTestCase {
         let json = #"""
              {
                  "amount": "27.31",
-                 "currencyCode": "USD"
+                 "currency": "USD"
              }
          """#.data(using: .utf8)!
 
@@ -58,7 +58,7 @@ final class DecodingTests: XCTestCase {
         let json = #"""
              {
                  "amount": "27.309999",
-                 "currencyCode": "USD"
+                 "currency": "USD"
              }
          """#.data(using: .utf8)!
 
@@ -86,7 +86,7 @@ final class DecodingTests: XCTestCase {
     func testDecodeUnkeyedContainerWithHeterogeneousRepresentations() throws {
         let json = #"""
             [
-                { "currencyCode": "USD", "amount": "100.00" },
+                { "currency": "USD", "amount": "100.00" },
                 50.00,
                 "10"
             ]
@@ -225,7 +225,7 @@ final class DecodingTests: XCTestCase {
         let json = #"""
             {
                 "amount": 27.31,
-                "currencyCode": "EUR"
+                "currency": "EUR"
             }
         """#.data(using: .utf8)!
 
@@ -246,7 +246,7 @@ final class DecodingTests: XCTestCase {
         let json = #"""
                {
                    "amount": "One Million Dollars"
-                   "currencyCode": "USD"
+                   "currency": "USD"
                }
            """#.data(using: .utf8)!
 
@@ -256,7 +256,7 @@ final class DecodingTests: XCTestCase {
     func testDecodeKeyedContainerWithMissingAmount() throws {
         let json = #"""
             {
-                "currencyCode": "USD"
+                "currency": "USD"
             }
         """#.data(using: .utf8)!
 

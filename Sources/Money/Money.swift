@@ -315,14 +315,14 @@ public struct MoneyEncodingOptions: OptionSet {
 extension Money: Codable {
     private enum CodingKeys: String, CodingKey {
         case amount
-        case currencyCode
+        case currency
     }
 
     public init(from decoder: Decoder) throws {
         let options = decoder.userInfo[.moneyDecodingOptions] as? MoneyDecodingOptions ?? []
 
         if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
-            let currencyCode = try keyedContainer.decode(String.self, forKey: .currencyCode)
+            let currencyCode = try keyedContainer.decode(String.self, forKey: .currency)
             guard currencyCode == Currency.code else {
                 let context = DecodingError.Context(codingPath: keyedContainer.codingPath, debugDescription: "Currency mismatch: expected \(Currency.code), got \(currencyCode)")
                 throw DecodingError.typeMismatch(Money<Currency>.self, context)
@@ -379,7 +379,7 @@ extension Money: Codable {
             }
         } else {
             var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
-            try keyedContainer.encode(Currency.code, forKey: .currencyCode)
+            try keyedContainer.encode(Currency.code, forKey: .currency)
             if options.contains(.encodeAmountAsString) {
                 try keyedContainer.encode(self.amount.description, forKey: .amount)
             } else {

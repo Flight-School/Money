@@ -197,7 +197,7 @@ let value: Money<USD> = 123.45
 
 let encoder = JSONEncoder()
 let data = try encoder.encode(value)
-String(data: data, encoding: .utf8) // #"{"amount":123.45,"currencyCode":"USD"}"#
+String(data: data, encoding: .utf8) // #"{"amount":123.45,"currency":"USD"}"#
 ```
 
 To configure encoding behavior,
@@ -222,7 +222,7 @@ with string or number values for `amount`.
 ```swift
 let json = #"""
 [
-    { "currencyCode": "USD", "amount": "100.00" },
+    { "currency": "USD", "amount": "100.00" },
     50.00,
     "10"
 ]
@@ -255,7 +255,7 @@ decoded precisely from a string representation.
 
 ```swift
 let json = #"""
-{ "currencyCode": "USD", "amount": "27.31" }
+{ "currency": "USD", "amount": "27.31" }
 """#.data(using: .utf8)!
 
 var decoder = JSONDecoder()
@@ -274,7 +274,7 @@ to the number of places of the minor currency unit.
 
 ```swift
 let json = #"""
-{ "currencyCode": "USD", "amount": 27.31 }
+{ "currency": "USD", "amount": 27.31 }
 """#.data(using: .utf8)!
 
 var decoder = JSONDecoder()
