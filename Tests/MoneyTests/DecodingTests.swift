@@ -87,6 +87,41 @@ final class DecodingTests: XCTestCase {
         }
     }
 
+    func testDecodeWithIntermediaryObject() throws {
+        struct Item: Codable {
+            struct Price: Codable {
+                let value: String
+                let currency: String
+            }
+
+            let name: String
+            private let unitPrice: Price
+
+            var unitPriceInUSD: Money<USD>? {
+                guard unitPrice.currency == USD.code else { return nil }
+                return Money(unitPrice.value)
+            }
+        }
+
+        let json = #"""
+             {
+                 "name": "Widget",
+                 "unitPrice": {
+                    "value": "3.33",
+                    "currency": "USD"
+                 }
+             }
+         """#.data(using: .utf8)!
+
+
+        do {
+            let actual = try decoder.decode(Item.self, from: json).unitPriceInUSD
+            let expected = Money<USD>(Decimal(string: "3.33")!)
+
+            XCTAssertEqual(actual, expected)
+        }
+    }
+
     func testDecodeKeyedContainerWithPreciseStringAmount() throws {
         let json = #"""
              {
