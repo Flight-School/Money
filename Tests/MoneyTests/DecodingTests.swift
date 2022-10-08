@@ -54,6 +54,39 @@ final class DecodingTests: XCTestCase {
         }
     }
 
+    func testDecodeKeyedContainerWithCustomKeys() throws {
+        let json = #"""
+             {
+                 "value": "27.31",
+                 "currency": "USD"
+             }
+         """#.data(using: .utf8)!
+
+        decoder.keyDecodingStrategy = .custom({ keys in
+            switch keys.last?.stringValue {
+            case "value":
+                return MoneyCodingKeys.amount
+            case "currency":
+                return MoneyCodingKeys.currencyCode
+            default:
+                return keys.last!
+            }
+        })
+
+        do {
+            XCTAssertNoThrow(try decoder.decode(Money<USD>.self, from: json))
+        }
+
+        do {
+            decoder.moneyDecodingOptions = [.requireStringAmount]
+
+            let actual = try decoder.decode(Money<USD>.self, from: json)
+            let expected = Money<USD>(Decimal(string: "27.31")!)
+
+            XCTAssertEqual(actual, expected)
+        }
+    }
+
     func testDecodeKeyedContainerWithPreciseStringAmount() throws {
         let json = #"""
              {
