@@ -289,6 +289,75 @@ roundedAmount.amount // 27.31
 
 For more information, see https://bugs.swift.org/browse/SR-7054.
 
+#### Customizing Coding Keys
+
+By default,
+`Money` values are encoded and decoded with the string keys
+`"amount"` and `"currencyCode"`, which
+correspond to their respective properties.
+
+If you're working with data that encodes monetary amounts differently,
+you can set the `keyDecodingStrategy` property of `JSONDecoder`
+to map to different key names:
+
+```swift
+let json = #"""
+ {
+    "value": "3.33",
+    "currency": "USD"
+ }
+ """#.data(using: .utf8)!
+
+let decoder = JSONDecoder()
+decoder.keyDecodingStrategy = .custom({ keys in
+    switch keys.last?.stringValue {
+    case "value":
+        return MoneyCodingKeys.amount
+    case "currency":
+        return MoneyCodingKeys.currencyCode
+    default:
+        return keys.last!
+    }
+})
+
+let amount = try decoder.decode(Money<USD>.self, from: json) // $3.33
+```
+
+Alternatively,
+you can create structures that match the shape of your data
+and derive computed properties that return `Money` types:
+
+```swift
+struct Item: Codable {
+    struct Price: Codable {
+        let value: String
+        let currency: String
+    }
+
+    let name: String
+    private let unitPrice: Price
+
+    var unitPriceInUSD: Money<USD>? {
+        guard unitPrice.currency == USD.code else { return nil }
+        return Money(unitPrice.value)
+    }
+}
+
+let json = #"""
+ {
+    "name": "Widget",
+    "unitPrice": {
+       "value": "3.33",
+       "currency": "USD"
+    }
+ }
+ """#.data(using: .utf8)!
+
+let decoder = JSONDecoder()
+let item = try decoder.decode(Item.self, from: json)
+item.unitPriceInUSD // $3.33
+```
+
 ### Supporting Multiple Currencies
 
 Consider a `Product` structure with a `price` property.
