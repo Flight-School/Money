@@ -33,6 +33,41 @@ final class EncodingTests: XCTestCase {
         XCTAssertEqual(actual, expected)
     }
 
+    func testEncodeKeyedContainerWithCustomKeys() throws {
+        struct AnyKey: CodingKey {
+            var stringValue: String
+            var intValue: Int?
+
+            init(stringValue: String) {
+                self.stringValue = stringValue
+                self.intValue = nil
+            }
+
+            init(intValue: Int) {
+                self.stringValue = String(intValue)
+                self.intValue = intValue
+            }
+        }
+
+        encoder.keyEncodingStrategy = .custom({ keys in
+            switch keys.last {
+            case MoneyCodingKeys.amount?:
+                return AnyKey(stringValue: "value")
+            case MoneyCodingKeys.currencyCode?:
+                return AnyKey(stringValue: "currency")
+            default:
+                return keys.last!
+            }
+        })
+
+        let data = try encoder.encode(money)
+        let actual = String(data: data, encoding: .utf8)
+
+        let expected = #"{"currency":"USD","value":27.31}"#
+
+        XCTAssertEqual(actual, expected)
+    }
+
     func testEncodeSingleValueContainerWithNumberAmount() throws {
         encoder.moneyEncodingOptions = [.omitCurrency]
 

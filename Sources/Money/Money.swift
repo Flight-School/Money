@@ -217,6 +217,17 @@ extension Money: ExpressibleByStringLiteral {
 
 // MARK: - Codable
 
+/**
+ Coding keys for `Money` values.
+ */
+public enum MoneyCodingKeys: String, CodingKey {
+    /// The coding key for the `amount` property.
+    case amount
+
+    /// The coding key for the `currencyCode` property
+    case currencyCode
+}
+
 extension CodingUserInfoKey {
     /**
      The key for specifying custom decoding options for `Money` values.
@@ -313,15 +324,10 @@ public struct MoneyEncodingOptions: OptionSet {
 }
 
 extension Money: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case amount
-        case currencyCode
-    }
-
     public init(from decoder: Decoder) throws {
         let options = decoder.userInfo[.moneyDecodingOptions] as? MoneyDecodingOptions ?? []
 
-        if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
+        if let keyedContainer = try? decoder.container(keyedBy: MoneyCodingKeys.self) {
             let currencyCode = try keyedContainer.decode(String.self, forKey: .currencyCode)
             guard currencyCode == Currency.code else {
                 let context = DecodingError.Context(codingPath: keyedContainer.codingPath, debugDescription: "Currency mismatch: expected \(Currency.code), got \(currencyCode)")
@@ -378,7 +384,7 @@ extension Money: Codable {
                 try singleValueContainer.encode(self.amount)
             }
         } else {
-            var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
+            var keyedContainer = encoder.container(keyedBy: MoneyCodingKeys.self)
             try keyedContainer.encode(Currency.code, forKey: .currencyCode)
             if options.contains(.encodeAmountAsString) {
                 try keyedContainer.encode(self.amount.description, forKey: .amount)
