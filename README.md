@@ -30,7 +30,7 @@ let package = Package(
   dependencies: [
     .package(
         url: "https://github.com/Flight-School/Money",
-        from: "1.3.0"
+        from: "1.4.0"
     ),
   ]
 )
@@ -44,7 +44,7 @@ You can install `Money` via CocoaPods,
 by adding the following line to your `Podfile`:
 
 ```ruby
-pod 'Money-FlightSchool', '~> 1.3.0'
+pod 'Money-FlightSchool', '~> 1.4.0'
 ```
 
 Run the `pod install` command to download the library
@@ -63,7 +63,7 @@ To use `Money` in your Xcode project using Carthage,
 specify it in `Cartfile`:
 
 ```
-github "Flight-School/Money" ~> 1.3.0
+github "Flight-School/Money" ~> 1.4.0
 ```
 
 Then run the `carthage update` command to build the framework,
