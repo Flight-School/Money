@@ -193,7 +193,10 @@ public func iso4217Currency(for code: String) -> CurrencyType.Type? {
     case "VND": return VND.self
     case "VUV": return VUV.self
     case "WST": return WST.self
+    case "XAF": return XAF.self
     case "XCD": return XCD.self
+    case "XOF": return XOF.self
+    case "XPF": return XPF.self
     case "YER": return YER.self
     case "ZAR": return ZAR.self
     case "ZMW": return ZMW.self
@@ -2543,6 +2546,21 @@ public enum WST: CurrencyType {
     }
 }
 
+/// CFA franc BEAC (XAF)
+public enum XAF: CurrencyType {
+    public static var code: String {
+        return "XAF"
+    }
+
+    public static var name: String {
+        return "CFA franc BEAC"
+    }
+
+    public static var minorUnit: Int {
+        return 0
+    }
+}
+
 /// East Caribbean Dollar (XCD)
 public enum XCD: CurrencyType {
     public static var code: String {
@@ -2555,6 +2573,36 @@ public enum XCD: CurrencyType {
 
     public static var minorUnit: Int {
         return 2
+    }
+}
+
+/// CFA franc BCEAO (XOF)
+public enum XOF: CurrencyType {
+    public static var code: String {
+        return "XOF"
+    }
+
+    public static var name: String {
+        return "CFA franc BCEAO"
+    }
+
+    public static var minorUnit: Int {
+        return 0
+    }
+}
+
+/// CFP franc (franc Pacifique) (XPF)
+public enum XPF: CurrencyType {
+    public static var code: String {
+        return "XPF"
+    }
+
+    public static var name: String {
+        return "CFP franc (franc Pacifique)"
+    }
+
+    public static var minorUnit: Int {
+        return 0
     }
 }
 
